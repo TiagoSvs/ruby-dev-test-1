@@ -1,0 +1,91 @@
+plugins:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 3.4
+  NewCops: enable
+  DisplayCopNames: true
+  SuggestExtensions: false
+  Exclude:
+    - 'bin/**/*'
+    - 'db/schema.rb'
+    - 'db/migrate/**/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'log/**/*'
+
+Layout/LineLength:
+  Max: 100
+
+Layout/EmptyLinesAroundBlockBody:
+  Enabled: true
+
+Layout/TrailingEmptyLines:
+  Enabled: true
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'test/**/*'
+
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/ModuleLength:
+  Max: 150
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Rails:
+  Enabled: true
+
+Rails/HttpStatus:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Enabled: true
+
+Rails/SaveBang:
+  Enabled: true
+
+Rails/TimeZone:
+  Enabled: true
+
+Rails/ActiveRecordCallbacksOrder:
+  Enabled: true
+
+RSpec:
+  Enabled: true
+
+RSpec/Focus:
+  Enabled: true
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/DescribeClass:
+  Enabled: true
+
+RSpec/SpecFilePathFormat:
+  Enabled: true
+
+RSpec/SpecFilePathSuffix:
+  Enabled: true
+
+Performance:
+  Enabled: true
