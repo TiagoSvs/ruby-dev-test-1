@@ -1,0 +1,201 @@
+openapi: 3.0.1
+info:
+  title: Directory and Files API
+  version: v1
+paths:
+  /directories:
+    get:
+      summary: List all directories
+      responses:
+        '200':
+          description: Array of directories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Directory'
+    post:
+      summary: Create a new directory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectoryInput'
+      responses:
+        '201':
+          description: Directory created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Directory'
+
+  /directories/{id}:
+    get:
+      summary: Show a directory by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Directory object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Directory'
+    put:
+      summary: Update a directory by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DirectoryInput'
+      responses:
+        '200':
+          description: Updated directory
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Directory'
+    delete:
+      summary: Delete a directory by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Directory deleted
+
+  /directories/{directory_id}/files:
+    get:
+      summary: List files in a directory
+      parameters:
+        - name: directory_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/File'
+    post:
+      summary: Upload files to a directory
+      parameters:
+        - name: directory_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required:
+                - files
+      responses:
+        '200':
+          description: Files uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /directories/{directory_id}/files/{id}:
+    delete:
+      summary: Delete a file from a directory
+      parameters:
+        - name: directory_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: File deleted
+        '404':
+          description: File not found
+
+components:
+  schemas:
+    Directory:
+      type: object
+      properties:
+        directory_id:
+          type: integer
+        name:
+          type: string
+        full_path:
+          type: string
+        parent_id:
+          type: integer
+          nullable: true
+        subdirectories:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+        files:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+
+    DirectoryInput:
+      type: object
+      properties:
+        name:
+          type: string
+        directory_id:
+          type: integer
+          nullable: true
+
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+        filename:
+          type: string
+        full_path:
+          type: string
+        url:
+          type: string

@@ -1,0 +1,58 @@
+# frozen_string_literal: true
+
+class DirectoriesController < ApplicationController
+  before_action :set_directory, only: %i[show update destroy]
+
+  def index
+    directory = Directory.all
+    render json: directory.map { |d| serialize_directory(d) }
+  end
+
+  def show
+    render json: serialize_directory(@directory)
+  end
+
+  def create
+    directory = Directory.new(directory_params)
+
+    if directory.save
+      render json: serialize_directory(directory), status: :created
+    else
+      render json: directory.errors, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @directory.update(directory_params)
+      render json: serialize_directory(@directory)
+    else
+      render json: @directory.errors, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @directory.destroy!
+    head :no_content
+  end
+
+  private
+
+  def set_directory
+    @directory = Directory.find(params[:id])
+  end
+
+  def directory_params
+    params.require(:directory).permit(:name, :directory_id)
+  end
+
+  def serialize_directory(directory)
+    {
+      directory_id: directory.id,
+      name: directory.name,
+      full_path: directory.full_path,
+      parent_id: directory.directory_id,
+      subdirectories: directory.subdirectories.map { |sub| { id: sub.id, name: sub.name } },
+      files: directory.files.map { |file| { id: file.id, filename: file.filename.to_s } }
+    }
+  end
+end
