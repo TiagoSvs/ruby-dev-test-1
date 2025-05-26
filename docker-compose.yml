@@ -1,0 +1,28 @@
+services:
+  api:
+    build: .
+    volumes:
+      - .:/rails
+    command: bash config/api_setup.sh
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17
+    volumes:
+      - ./tmp/pg-data:/var/lib/postgresql/data
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=us-east-1
+      - EDGE_PORT=4566
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
