@@ -47,6 +47,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_26_082928) do
     t.bigint "directory_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["directory_id", "name"], name: "index_directories_on_directory_id_and_name", unique: true
     t.index ["directory_id"], name: "index_directories_on_directory_id"
   end
 

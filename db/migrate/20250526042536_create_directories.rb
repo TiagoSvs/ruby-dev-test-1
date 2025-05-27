@@ -6,5 +6,7 @@ class CreateDirectories < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
+
+    add_index :directories, [:directory_id, :name], unique: true
   end
 end
