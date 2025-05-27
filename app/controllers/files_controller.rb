@@ -3,36 +3,38 @@
 include Rails.application.routes.url_helpers
 
 class FilesController < ApplicationController
+  before_action :set_directory, only: %i[index create destroy]
+
   def index
-    dir = Directory.find(params[:directory_id])
-    files = dir.files.map { |file| serialize_file(file, dir) }
+    files = @directory.files.map { |file| serialize_file(file, @directory) }
 
     render json: files
   end
 
   def create
-    dir = Directory.find(params[:directory_id])
-
     if params[:files].blank?
-      return render json: { error: 'No files provided.' },
-                    status: :bad_request
+      return render json: { error: I18n.t('messages.file.missing') }, status: :bad_request
     end
 
-    dir.files.attach(params[:files])
-    render json: { message: 'Files uploaded successfully.' }, status: :ok
+    @directory.files.attach(params[:files])
+    render json: { message: I18n.t('messages.file.uploaded') }, status: :ok
   end
 
   def destroy
-    folder = Directory.find(params[:directory_id])
-    file = folder.files.find_by(id: params[:id])
-
-    return render json: { error: 'File not found.' }, status: :not_found unless file
+    file = @directory.files.find_by(id: params[:id])
+    return render json: { error: I18n.t('messages.file.not_found') }, status: :not_found unless file
 
     file.purge
     head :no_content
   end
 
   private
+
+  def set_directory
+    @directory = Directory.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: I18n.t('messages.directory.not_found') }, status: :not_found
+  end
 
   def serialize_file(file, dir)
     {

@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe 'FilesController', type: :request do
   let(:directory) { create(:directory) }
+
   let(:file_blob) do
     ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new("test file content"),
+      io: StringIO.new('test file content'),
       filename: 'test.txt',
       content_type: 'text/plain'
     )
@@ -17,8 +20,11 @@ RSpec.describe 'FilesController', type: :request do
       get directory_files_path(directory.id)
 
       expect(response).to have_http_status(:ok)
-      body = JSON.parse(response.body)
+      body = response.parsed_body
+
+      expect(body).to be_an(Array)
       expect(body.first['filename']).to eq('test.txt')
+      expect(body.first['full_path']).to include('test.txt')
     end
   end
 
@@ -29,7 +35,7 @@ RSpec.describe 'FilesController', type: :request do
       post directory_files_path(directory.id), params: { files: [file] }
 
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)['message']).to eq('Files uploaded successfully.')
+      expect(response.parsed_body['message']).to eq('Files uploaded successfully.')
       expect(directory.reload.files.count).to eq(1)
     end
 
@@ -37,7 +43,7 @@ RSpec.describe 'FilesController', type: :request do
       post directory_files_path(directory.id), params: {}
 
       expect(response).to have_http_status(:bad_request)
-      expect(JSON.parse(response.body)['error']).to eq('No files provided.')
+      expect(response.parsed_body['error']).to eq('No files provided.')
     end
   end
 
@@ -56,7 +62,7 @@ RSpec.describe 'FilesController', type: :request do
       delete directory_file_path(directory.id, 'nonexistent-id')
 
       expect(response).to have_http_status(:not_found)
-      expect(JSON.parse(response.body)['error']).to eq('File not found.')
+      expect(response.parsed_body['error']).to eq('File not found.')
     end
   end
 end

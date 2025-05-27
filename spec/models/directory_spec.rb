@@ -13,7 +13,9 @@ RSpec.describe Directory, type: :model do
   end
 
   describe 'validations' do
-    subject { described_class.new(name: 'Folder A', directory_id: nil) }
+    subject { build(:directory, name: 'Folder A', directory_id: nil) }
+
+    it { is_expected.to validate_presence_of(:name) }
 
     it 'is valid with valid attributes' do
       expect(subject).to be_valid
@@ -25,35 +27,33 @@ RSpec.describe Directory, type: :model do
       expect(subject.errors[:name]).to include("can't be blank")
     end
 
-    context 'uniqueness validation' do
-      before do
-        described_class.create!(name: 'Folder A', directory_id: nil)
-      end
+    context 'uniqueness validation within scope of directory_id' do
+      let!(:existing) { create(:directory, name: 'Folder A', directory_id: nil) }
 
-      it 'is not valid with duplicate name in the same directory' do
-        duplicate = described_class.new(name: 'Folder A', directory_id: nil)
+      it 'is not valid with duplicate name in the same parent directory' do
+        duplicate = build(:directory, name: 'Folder A', directory_id: nil)
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:name]).to include('has already been taken')
       end
 
-      it 'is valid with same name in different directories' do
-        parent_dir = described_class.create!(name: 'Parent Folder', directory_id: nil)
-        new_dir = described_class.new(name: 'Folder A', directory_id: parent_dir.id)
-        expect(new_dir).to be_valid
+      it 'is valid with the same name in a different parent directory' do
+        parent_dir = create(:directory, name: 'Parent Folder')
+        other = build(:directory, name: 'Folder A', directory_id: parent_dir.id)
+        expect(other).to be_valid
       end
     end
   end
 
   describe '#full_path' do
-    let(:root_dir) { described_class.create!(name: 'root') }
-    let(:child_dir) { described_class.create!(name: 'child', directory_id: root_dir.id) }
-    let(:grandchild_dir) { described_class.create!(name: 'grandchild', directory_id: child_dir.id) }
+    let!(:root_dir) { create(:directory, name: 'root') }
+    let!(:child_dir) { create(:directory, name: 'child', directory_id: root_dir.id) }
+    let!(:grandchild_dir) { create(:directory, name: 'grandchild', directory_id: child_dir.id) }
 
-    it 'returns name if no parent' do
+    it 'returns its own name if no parent' do
       expect(root_dir.full_path).to eq('root')
     end
 
-    it 'returns full path concatenated with parent names' do
+    it 'returns full path including all parent directories' do
       expect(child_dir.full_path).to eq('root/child')
       expect(grandchild_dir.full_path).to eq('root/child/grandchild')
     end

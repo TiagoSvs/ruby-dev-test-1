@@ -1,0 +1,26 @@
+pt-BR:
+  activerecord:
+    models:
+      directory: "Diretório"
+    attributes:
+      directory:
+        name: "Nome"
+        directory_id: "Diretório pai"
+    errors:
+      models:
+        directory:
+          attributes:
+            name:
+              blank: "não pode ficar em branco"
+              taken: "já está em uso neste diretório"
+
+  messages:
+    directory:
+      created: "Diretório criado com sucesso."
+      updated: "Diretório atualizado com sucesso."
+      deleted: "Diretório excluído com sucesso."
+      not_found: "Diretório não encontrado."
+    file:
+      uploaded: "Arquivos enviados com sucesso."
+      not_found: "Arquivo não encontrado."
+      missing: "Nenhum arquivo foi enviado."

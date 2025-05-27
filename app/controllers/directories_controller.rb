@@ -4,8 +4,14 @@ class DirectoriesController < ApplicationController
   before_action :set_directory, only: %i[show update destroy]
 
   def index
-    directory = Directory.all
-    render json: directory.map { |d| serialize_directory(d) }
+    directories = Directory.page(params[:page]).per(params[:per_page] || 10)
+
+    render json: {
+      current_page: directories.current_page,
+      total_pages: directories.total_pages,
+      total_count: directories.total_count,
+      directories: directories.map { |d| serialize_directory(d) }
+    }
   end
 
   def show
@@ -42,7 +48,7 @@ class DirectoriesController < ApplicationController
   end
 
   def directory_params
-    params.require(:directory).permit(:name, :directory_id)
+    params.expect(directory: %i[name directory_id])
   end
 
   def serialize_directory(directory)

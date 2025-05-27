@@ -36,6 +36,10 @@ gem 'image_processing', '~> 1.2'
 
 gem 'aws-sdk-s3', '~> 1.186', require: false
 
+gem 'kaminari', '~> 0.17.0'
+
+gem 'rails-i18n', '~> 8.0'
+
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem 'rack-cors'
 
@@ -51,8 +55,9 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem 'rubocop-rails-omakase', '~> 1.1', require: false
 
-  gem 'rspec-rails', '~> 8.0'
   gem 'factory_bot_rails', '~> 6.2'
+  gem 'ostruct', '~> 0.6.1'
+  gem 'rspec-rails', '~> 8.0'
   gem 'rswag-api', '~> 2.16'
   gem 'rswag-specs', '~> 2.16'
   gem 'rswag-ui', '~> 2.16'
