@@ -24,7 +24,7 @@ RSpec.describe Directory, type: :model do
     it 'is not valid without a name' do
       subject.name = nil
       expect(subject).not_to be_valid
-      expect(subject.errors[:name]).to include("can't be blank")
+      expect(subject.errors[:name]).to include('não pode ficar em branco')
     end
 
     context 'uniqueness validation within scope of directory_id' do
@@ -33,7 +33,7 @@ RSpec.describe Directory, type: :model do
       it 'is not valid with duplicate name in the same parent directory' do
         duplicate = build(:directory, name: 'Folder A', directory_id: nil)
         expect(duplicate).not_to be_valid
-        expect(duplicate.errors[:name]).to include('has already been taken')
+        expect(duplicate.errors[:name]).to include('já está em uso neste diretório')
       end
 
       it 'is valid with the same name in a different parent directory' do

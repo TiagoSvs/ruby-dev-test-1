@@ -31,7 +31,7 @@ class FilesController < ApplicationController
   private
 
   def set_directory
-    @directory = Directory.find(params[:id])
+    @directory = Directory.find(params[:directory_id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: I18n.t('messages.directory.not_found') }, status: :not_found
   end

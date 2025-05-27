@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :directory do
-    name { 'Sample Directory' }
+    sequence(:name) { |n| "Directory#{n}" }
     directory_id { nil }
   end
 end

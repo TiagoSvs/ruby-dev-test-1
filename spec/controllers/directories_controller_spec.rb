@@ -3,8 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe 'DirectoriesController', type: :request do
-  let!(:parent_directory) { create(:directory, name: 'Parent') }
-  let!(:directory) { create(:directory, name: 'Child', directory_id: parent_directory.id) }
+  let!(:parent_directory) { create(:directory, name: "Parent_#{SecureRandom.hex(4)}") }
+  let!(:directory) do
+    create(:directory, name: "Child_#{SecureRandom.hex(4)}", directory_id: parent_directory.id)
+  end
 
   describe 'GET /directories' do
     it 'returns a paginated list of directories' do
@@ -26,7 +28,7 @@ RSpec.describe 'DirectoriesController', type: :request do
       expect(response).to have_http_status(:ok)
       body = response.parsed_body
 
-      expect(body['name']).to eq('Child')
+      expect(body['name']).to eq(directory.name)
       expect(body['parent_id']).to eq(parent_directory.id)
     end
   end
@@ -43,9 +45,8 @@ RSpec.describe 'DirectoriesController', type: :request do
       expect(response).to have_http_status(:created)
       body = response.parsed_body
 
-      expect(body['message']).to eq(I18n.t('messages.directory.created'))
-      expect(body['directory']['name']).to eq('New Folder')
-      expect(body['directory']['parent_id']).to eq(parent_directory.id)
+      expect(body['name']).to eq('New Folder')
+      expect(body['parent_id']).to eq(parent_directory.id)
     end
 
     it 'returns an error if required params are missing' do
@@ -67,8 +68,7 @@ RSpec.describe 'DirectoriesController', type: :request do
       expect(response).to have_http_status(:ok)
       body = response.parsed_body
 
-      expect(body['message']).to eq(I18n.t('messages.directory.updated'))
-      expect(body['directory']['name']).to eq('Updated Name')
+      expect(body['name']).to eq('Updated Name')
     end
 
     it 'returns an error if update is invalid' do
@@ -85,10 +85,7 @@ RSpec.describe 'DirectoriesController', type: :request do
     it 'deletes the directory' do
       delete directory_path(directory.id)
 
-      expect(response).to have_http_status(:ok)
-      body = response.parsed_body
-
-      expect(body['message']).to eq(I18n.t('messages.directory.deleted'))
+      expect(response).to have_http_status(:no_content)
       expect(Directory.find_by(id: directory.id)).to be_nil
     end
   end

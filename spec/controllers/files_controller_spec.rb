@@ -35,7 +35,7 @@ RSpec.describe 'FilesController', type: :request do
       post directory_files_path(directory.id), params: { files: [file] }
 
       expect(response).to have_http_status(:ok)
-      expect(response.parsed_body['message']).to eq('Files uploaded successfully.')
+      expect(response.parsed_body['message']).to eq('Arquivos enviados com sucesso.')
       expect(directory.reload.files.count).to eq(1)
     end
 
@@ -43,7 +43,7 @@ RSpec.describe 'FilesController', type: :request do
       post directory_files_path(directory.id), params: {}
 
       expect(response).to have_http_status(:bad_request)
-      expect(response.parsed_body['error']).to eq('No files provided.')
+      expect(response.parsed_body['error']).to eq('Nenhum arquivo foi enviado.')
     end
   end
 
@@ -62,7 +62,7 @@ RSpec.describe 'FilesController', type: :request do
       delete directory_file_path(directory.id, 'nonexistent-id')
 
       expect(response).to have_http_status(:not_found)
-      expect(response.parsed_body['error']).to eq('File not found.')
+      expect(response.parsed_body['error']).to eq('Arquivo não encontrado.')
     end
   end
 end
